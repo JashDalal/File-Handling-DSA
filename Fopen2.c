@@ -41,7 +41,7 @@ File *Fopen(const char *filename, const char *mode) {
 			return NULL;
 		}
 	}  
-	else if(!(strcmp(mode, "r+")) || !(strcmp(mode, "rb+")))
+	else if(!(strcmp(mode, "r+")) || !(strcmp(mode, "rb+"))) {
 	 /*else case is entered in case of
 	 * "r+" and "rb+"
 	 */
@@ -60,7 +60,7 @@ File *Fopen(const char *filename, const char *mode) {
 			return NULL;
 		}
 	}
-	else if(!(strcmp(mode, "w+")) || !(strcmp(mode, "wb+")))
+	else if(!(strcmp(mode, "w+")) || !(strcmp(mode, "wb+"))) {
 	 /*else case is entered in case of
 	 * "w+" and "wb+"
 	 */
@@ -81,10 +81,7 @@ File *Fopen(const char *filename, const char *mode) {
 		}  
 	}
 	
-	else if(!(strcmp(mode, "a+")) || !(strcmp(mode, "ab+")))
-	/*else case is entered in case of
-	 * "w+" and "wb+"
-	 */
+	else if(!(strcmp(mode, "a+")) || !(strcmp(mode, "ab+"))) {
 		 fp->fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR|S_IWUSR);
 		 fp->modeflag = READAPPEND;
 		 if(fp->fd == -1) {
@@ -97,5 +94,14 @@ File *Fopen(const char *filename, const char *mode) {
 		return NULL;
 	}			
 	return fp;
+}
+
+int Fclose(File *stream) {
+	/*close() returns 0 if the file was 
+	 *closed properly.
+	 *It returns -1(EOF) if the file was
+	 *not closed properly.
+	 */
+	 return (close(stream->fd));
 }
 
