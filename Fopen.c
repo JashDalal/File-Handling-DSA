@@ -4,13 +4,19 @@
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "Fopen.h"
 
-FILE *Fopen(const char *filename, const char *mode) {
-	//file->fp = fopen(const char *filename, const char *mode);
-	int i = 0, fd;
+#define READ 1
+#define WRITE 2
+#define APPEND 3
+#define READWRITE 4
+#define READAPPEND 5
+
+File *Fopen(const char *filename, const char *mode) {
+	int i = 0;
+	File *fp = malloc(sizeof(File));
 	/*The modes that can be used in fopen are :
-	 *"r"  : Read only mode provided the file exists(O_RDONLY) 
 	 *"w"  : Write only mode in the filename provided,
 	 *		 if the file does not exist, then create and write.
 	 *		 (O_WRONLY | O_CREAT | O_TRUNC)
@@ -22,42 +28,76 @@ FILE *Fopen(const char *filename, const char *mode) {
 	 *"a+" : Creates file and enables read append mode		 
 	 *		 (O_RDWR | O_CREAT | O_APPEND)
 	 */
+	 printf("mode[i] is %c\n", mode[i]);
 	switch(mode[i]) {
-	
+		
 		case 'r' :
+					
 					switch(mode[++i]) {
-						case '+' : file->fd = open(filename, O_RDWR);
-								   if(file->fd == -1) {
-								   		perror("Fopen() failed");
-								   		exit(1);
+						case '+' : fp->fd = open(filename, O_RDWR, S_IRUSR|S_IWUSR);
+								   fp->modeflag = READWRITE;
+								   if(fp->fd == -1) {
+								   		errno = EPERM;
+								   		return NULL;
 								   }  
 								   break;
-						case '\0' : file->fd = open(filename, O_RDONLY);
-								   	if(file->fd == -1) {
-								   		perror("Fopen() failed");
-								   		exit(1);
+					
+						case 'b' :
+						case '\0' : 
+									fp->fd = open(filename, O_RDONLY, S_IRUSR);
+									fp->modeflag = READ;
+								   	if(fp->fd == -1) {
+								   		errno = EPERM;
+								   		return NULL;
 								   	}  
 								   	break;
 					}
 					break;
+					
 		case 'w' :
 					switch(mode[++i]) {
-						case '+' : file->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC);
+						case '+' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR|S_IWUSR);
+								   fp->modeflag = READWRITE;
+								   if(fp->fd == -1) {
+								   		errno = EPERM;
+								   		return NULL;
+								   }  
 								   break;
-						case '\0' : file->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC);
+					
+						case 'b' :
+						case '\0' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR);
+									fp->modeflag = WRITE;
+								   if(fp->fd == -1) {
+								   		errno = EPERM;
+								   		return NULL;
+								   }  						
 								   	break;
 					}
 					break;	
 					
 		case 'a' : 									
 					switch(mode[++i]) {
-						case '+' : file->fd = open(filename, O_RDWR | O_CREAT | O_APPEND);
+						case '+' : fp->fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IWUSR);
+								   fp->modeflag = READAPPEND;
+								   if(fp->fd == -1) {
+								   		errno = EPERM;
+								   		return NULL;
+								   }  						
 								   break;
-						case '\0' : file->fd = open(filename, O_WRONLY | O_CREAT | O_APPEND);
-								   	break;
+					
+						case 'b' :
+						case '\0' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, S_IWUSR);
+									fp->modeflag = APPEND;
+								   if(fp->fd == -1) {
+								   		errno = EPERM;
+								   		return NULL;
+								   }  
+								   	break;				
 					}
-					break;
+					break;	
 					
-		default :	
-					
+		default : errno = EINVAL;
+				  return NULL;			
+	}
+	return fp;
 }
