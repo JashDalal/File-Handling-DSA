@@ -15,6 +15,8 @@
 #define READAPPEND 5
 #define MAX 20
 
+#define allPermissions S_IRUSR|S_IWUSR|S_IRWXU|S_IXUSR|S_IRWXG| S_IRGRP|S_IWGRP|S_IXGRP| S_IRWXO| S_IROTH|S_IWOTH|S_IXOTH
+
 /*Global declaration of array of struct Files is necessary
  *for passing multiple files.
  *Maximum number of files that can be opened together is set to "MAX".
@@ -38,7 +40,7 @@ File *Fopen(const char *filename, const char *mode) {
 	 */
 		
 	if(!(strcmp(mode, "r")) || !(strcmp(mode, "rb"))) {
-		(fp[i]).fd = open(filename, O_RDONLY, S_IRUSR);
+		(fp[i]).fd = open(filename, O_RDONLY, allPermissions);
 		(fp[i]).modeflag = READ;
 		if((fp[i]).fd == -1) {
 			errno = EPERM;
@@ -49,7 +51,7 @@ File *Fopen(const char *filename, const char *mode) {
 	 /*else case is entered in case of
 	 * "r+" and "rb+"
 	 */
-		(fp[i]).fd = open(filename, O_RDWR, S_IRUSR|S_IWUSR);
+		(fp[i]).fd = open(filename, O_RDWR, allPermissions);
 		(fp[i]).modeflag = READWRITE;
 		if((fp[i]).fd == -1) {
 			errno = EPERM;
@@ -57,7 +59,7 @@ File *Fopen(const char *filename, const char *mode) {
 		}  
 	}								 
 	else if(!(strcmp(mode, "w")) || !(strcmp(mode, "wb"))) {
-		(fp[i]).fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR);
+		(fp[i]).fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, allPermissions);
 		(fp[i]).modeflag = WRITE;
 		if((fp[i]).fd == -1) {
 			errno = EPERM;
@@ -68,7 +70,7 @@ File *Fopen(const char *filename, const char *mode) {
 	 /*else case is entered in case of
 	 * "w+" and "wb+"
 	 */
-		(fp[i]).fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR|S_IWUSR);
+		(fp[i]).fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, allPermissions);
 		(fp[i]).modeflag = READWRITE;
 		if((fp[i]).fd == -1) {
 			errno = EPERM;
@@ -77,7 +79,7 @@ File *Fopen(const char *filename, const char *mode) {
 	}
 											   
 	else if(!(strcmp(mode, "a")) || !(strcmp(mode, "ab"))) {			
-		(fp[i]).fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, S_IWUSR);
+		(fp[i]).fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, allPermissions);
 		(fp[i]).modeflag = APPEND;
 		if((fp[i]).fd == -1) {
 			errno = EPERM;
@@ -86,7 +88,7 @@ File *Fopen(const char *filename, const char *mode) {
 	}
 	
 	else if(!(strcmp(mode, "a+")) || !(strcmp(mode, "ab+"))) {
-		 (fp[i]).fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR|S_IWUSR);
+		 (fp[i]).fd = open(filename, O_RDWR | O_CREAT | O_APPEND, allPermissions);
 		 (fp[i]).modeflag = READAPPEND;
 		 if((fp[i]).fd == -1) {
 		 	errno = EPERM;
@@ -108,9 +110,9 @@ int Fclose(File *stream) {
 	 *Here, we also have to free variables
 	 *and empty buffered arrays which have 
 	 *malloced in the subsequent function calls.
-	 */
-	 
+	 */	 
 	 return (close(stream->fd));
 }
+
 
 
