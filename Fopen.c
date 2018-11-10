@@ -13,6 +13,8 @@
 #define READWRITE 4
 #define READAPPEND 5
 
+#define allPermissions S_IRUSR|S_IWUSR|S_IRWXU|S_IXUSR|S_IRWXG| S_IRGRP|S_IWGRP|S_IXGRP| S_IRWXO| S_IROTH|S_IWOTH|S_IXOTH
+
 File *Fopen(const char *filename, const char *mode) {
 	int i = 0;
 	File *fp = malloc(sizeof(File));
@@ -34,7 +36,7 @@ File *Fopen(const char *filename, const char *mode) {
 		case 'r' :
 					
 					switch(mode[++i]) {
-						case '+' : fp->fd = open(filename, O_RDWR, S_IRUSR|S_IWUSR);
+						case '+' : fp->fd = open(filename, O_RDWR, allPermissions);
 								   fp->modeflag = READWRITE;
 								   if(fp->fd == -1) {
 								   		errno = EPERM;
@@ -44,7 +46,7 @@ File *Fopen(const char *filename, const char *mode) {
 					
 						case 'b' :
 						case '\0' : 
-									fp->fd = open(filename, O_RDONLY, S_IRUSR);
+									fp->fd = open(filename, O_RDONLY, allPermissions);
 									fp->modeflag = READ;
 								   	if(fp->fd == -1) {
 								   		errno = EPERM;
@@ -56,7 +58,7 @@ File *Fopen(const char *filename, const char *mode) {
 					
 		case 'w' :
 					switch(mode[++i]) {
-						case '+' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR|S_IWUSR);
+						case '+' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, allPermissions);
 								   fp->modeflag = READWRITE;
 								   if(fp->fd == -1) {
 								   		errno = EPERM;
@@ -65,7 +67,7 @@ File *Fopen(const char *filename, const char *mode) {
 								   break;
 					
 						case 'b' :
-						case '\0' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR);
+						case '\0' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, allPermissions);
 									fp->modeflag = WRITE;
 								   if(fp->fd == -1) {
 								   		errno = EPERM;
@@ -77,7 +79,7 @@ File *Fopen(const char *filename, const char *mode) {
 					
 		case 'a' : 									
 					switch(mode[++i]) {
-						case '+' : fp->fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IWUSR);
+						case '+' : fp->fd = open(filename, O_RDWR | O_CREAT | O_APPEND, allPermissions);
 								   fp->modeflag = READAPPEND;
 								   if(fp->fd == -1) {
 								   		errno = EPERM;
@@ -86,7 +88,7 @@ File *Fopen(const char *filename, const char *mode) {
 								   break;
 					
 						case 'b' :
-						case '\0' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, S_IWUSR);
+						case '\0' : fp->fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, allPermissions);
 									fp->modeflag = APPEND;
 								   if(fp->fd == -1) {
 								   		errno = EPERM;
