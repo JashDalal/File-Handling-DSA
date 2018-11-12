@@ -1,0 +1,43 @@
+	OPEN
+
+/*The modes that can be used in fopen are :
+	 *"r"  : Read only mode(file must exist) 
+	 *"w"  : Write only mode in the filename provided,
+	 *		 if the file does not exist, then create and write.
+	 *		 (O_WRONLY | O_CREAT | O_TRUNC)
+	 *"a"  : Append mode(append to the end of the file)
+	 		 (O_WRONLY | O_CREAT | O_APPEND)
+	 *"r+" : Read and write mode(O_RDWR)
+	 *"w+" : Creates file and enables read write mode
+	 *		 (O_RDWR | O_CREAT | O_TRUNC)
+	 *"a+" : Creates file and enables read append mode		 
+	 *		 (O_RDWR | O_CREAT | O_APPEND)
+	 */
+	 
+	 CLOSE
+
+	/*close() returns 0 if the file was 
+	 *closed properly.
+	 *It returns -1(EOF) if the file was
+	 *not closed properly.
+	 *Here, we also have to free variables
+	 *and empty buffered arrays which have 
+	 *malloced in the subsequent function calls.
+	 */
+	 
+	 
+	 READ
+	 
+	 /*File opened in Write only("w") mode is completely erased when an attempt 
+		 *is made to read from it. This is handled by O_TRUNC
+		 *File opened in Append only("a") mode is retained when an attempt 
+		 *is made to read from it.
+		 *Number of bytes returned are zero in both cases.
+		 */ 
+		 
+	FEOF
+	
+	/*Returns non-zero values in case when 
+ *file is not at EOF but
+ *if at EOF it returns zero.
+ */

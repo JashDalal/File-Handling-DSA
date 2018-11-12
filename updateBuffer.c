@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include "Fopen.h"
 void updateBuffer(File *fp, char *temp){
   	int flag, wrbytes;
   	int i;
